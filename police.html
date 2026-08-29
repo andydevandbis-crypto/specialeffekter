@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Polisbil Effekt</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, #250000 0%, #0b0b0b 45%, #050505 100%);
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    min-height: 100vh;
+    padding: 0 0 30px;
+}
+
+/* HEADER */
+
+.header {
+    padding: 28px 15px 24px;
+    background: rgba(0,0,0,0.45);
+    border-bottom: 1px solid #6d5616;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #f4e6b0;
+    letter-spacing: 1px;
+}
+
+.header p {
+    margin: 8px 0 0;
+    color: #a88722;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* INNEHÅLL */
+
+.content {
+    width: 100%;
+    max-width: 520px;
+    margin: auto;
+    padding: 20px 12px;
+}
+
+/* KNAPPAR */
+
+.btn {
+    width: 100%;
+    min-height: 150px;
+
+    padding: 20px;
+    margin: 12px 0;
+
+    font-size: 27px;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #202020,
+            #111111
+        );
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    transition: 0.15s;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn.active {
+    background:
+        linear-gradient(
+            145deg,
+            #720000,
+            #300000
+        );
+
+    border-color: #c9a227;
+
+    box-shadow:
+        0 0 20px rgba(150,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.icon {
+    font-size: 48px;
+}
+
+.label {
+    font-size: 27px;
+}
+
+/* TILLBAKA */
+
+.back {
+    display: block;
+
+    width: 100%;
+    max-width: 520px;
+
+    margin: 25px auto 0;
+    padding: 17px;
+
+    color: #c9a227;
+    text-decoration: none;
+
+    border: 1px solid #6d5616;
+    border-radius: 8px;
+
+    background: rgba(15,15,15,0.9);
+
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.back:active {
+    transform: scale(0.97);
+}
+
+/* BLINKANDE LJUS */
+
+.flash {
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    animation: blink 0.6s infinite;
+
+    z-index: 999;
+}
+
+@keyframes blink {
+
+    0% {
+        background: rgba(255,0,0,0.7);
+        opacity: 1;
+    }
+
+    50% {
+        background: rgba(0,0,255,0.7);
+        opacity: 1;
+    }
+
+    100% {
+        background: rgba(255,0,0,0.7);
+        opacity: 1;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 480px) {
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    .btn {
+        min-height: 140px;
+    }
+
+    .icon {
+        font-size: 45px;
+    }
+
+    .label {
+        font-size: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <h1>🚓 Polisbil Effekt</h1>
+
+    <p>Mafia Edition</p>
+
+</header>
+
+
+<main class="content">
+
+    <!-- LJUD -->
+
+    <button class="btn" id="soundBtn">
+
+        <span class="icon">🔊</span>
+
+        <span class="label">
+            Ljud
+        </span>
+
+    </button>
+
+
+    <!-- LJUS -->
+
+    <button class="btn" id="lightBtn">
+
+        <span class="icon">💡</span>
+
+        <span class="label">
+            Ljus
+        </span>
+
+    </button>
+
+
+    <!-- LJUD + LJUS -->
+
+    <button class="btn" id="soundLightBtn">
+
+        <span class="icon">🚨</span>
+
+        <span class="label">
+            Ljud + Ljus
+        </span>
+
+    </button>
+
+
+    <!-- TILLBAKA -->
+
+    <a href="index.html" class="back">
+        ← Tillbaka
+    </a>
+
+</main>
+
+
+<!-- BLINK -->
+
+<div id="flash" class="flash hidden"></div>
+
+
+<script>
+
+/* =========================================
+   LJUD
+========================================= */
+
+const siren = new Audio("police.mp3");
+
+siren.loop = true;
+
+const flash = document.getElementById("flash");
+
+
+let soundActive = false;
+let lightActive = false;
+let soundLightActive = false;
+
+
+/* =========================================
+   LJUD
+========================================= */
+
+document
+.getElementById("soundBtn")
+.addEventListener("click", function () {
+
+    if (!soundActive) {
+
+        siren.currentTime = 0;
+
+        siren.play();
+
+        flash.classList.add("hidden");
+
+        soundActive = true;
+        lightActive = false;
+        soundLightActive = false;
+
+        resetButtons();
+
+        this.classList.add("active");
+
+    } else {
+
+        stopAll();
+
+    }
+
+});
+
+
+/* =========================================
+   LJUS
+========================================= */
+
+document
+.getElementById("lightBtn")
+.addEventListener("click", function () {
+
+    if (!lightActive) {
+
+        siren.pause();
+
+        flash.classList.remove("hidden");
+
+        lightActive = true;
+        soundActive = false;
+        soundLightActive = false;
+
+        resetButtons();
+
+        this.classList.add("active");
+
+    } else {
+
+        stopAll();
+
+    }
+
+});
+
+
+/* =========================================
+   LJUD + LJUS
+========================================= */
+
+document
+.getElementById("soundLightBtn")
+.addEventListener("click", function () {
+
+    if (!soundLightActive) {
+
+        siren.currentTime = 0;
+
+        siren.play();
+
+        flash.classList.remove("hidden");
+
+        soundLightActive = true;
+        soundActive = false;
+        lightActive = false;
+
+        resetButtons();
+
+        this.classList.add("active");
+
+    } else {
+
+        stopAll();
+
+    }
+
+});
+
+
+/* =========================================
+   STOPPA ALLT
+========================================= */
+
+function stopAll() {
+
+    siren.pause();
+
+    siren.currentTime = 0;
+
+    flash.classList.add("hidden");
+
+    soundActive = false;
+    lightActive = false;
+    soundLightActive = false;
+
+    resetButtons();
+
+}
+
+
+/* =========================================
+   ÅTERSTÄLL KNAPPAR
+========================================= */
+
+function resetButtons() {
+
+    document
+    .querySelectorAll(".btn")
+    .forEach(btn => {
+
+        btn.classList.remove("active");
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
